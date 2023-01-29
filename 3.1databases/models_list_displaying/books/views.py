@@ -1,4 +1,4 @@
-from django.core.paginator import Paginator
+from django.db.models import F
 from django.http import HttpResponse
 from django.shortcuts import render
 from .models import Book
@@ -18,13 +18,16 @@ def pub_date_view(request, pub_date):
     if not book:
         return HttpResponse(f'Публикаций за {pub_date.strftime("%Y-%m-%d")} не найдено.')
     else:
-        books = Book.objects.all()
-        paginator = Paginator(books, 1)
-        current_page = request.GET.get('page', 1)
-        page = paginator.get_page(current_page)
-
-        context = {
-            'books': page.object_list,
-            'page': page,
-        }
-        return render(request, 'books/books_paginator.html', context)
+        book = Book.objects.filter(pub_date=pub_date)
+        next_page = Book.objects.filter(pub_date__lt=pub_date).order_by('-pub_date').first()
+        if next_page:
+            next_page = next_page.pub_date.strftime('%Y-%m-%d')
+        previous_page = Book.objects.filter(pub_date__gt=pub_date).order_by('pub_date').first()
+        if previous_page:
+            previous_page = previous_page.pub_date.strftime('%Y-%m-%d')
+    context = {
+        'book': book,
+        'next_page': next_page,
+        'previous_page': previous_page,
+    }
+    return render(request, 'books/books_paginator.html', context)

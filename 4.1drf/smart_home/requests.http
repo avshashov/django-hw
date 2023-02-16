@@ -1,0 +1,41 @@
+# получение датчиков
+GET localhost:8000/api/sensors/
+Content-Type: application/json
+
+###
+
+# создание датчика
+POST localhost:8000/api/sensors/
+Content-Type: application/json
+
+{
+  "name": "ESP32",
+  "description": "Перенес датчик на балкон"
+}
+
+###
+
+# обновление датчика
+PATCH localhost:8000/api/sensors/1/
+Content-Type: application/json
+
+{
+  "description": "Перенес датчик на кухню"
+}
+
+###
+
+# добавление измерения
+POST localhost:8000/api/measurements/
+Content-Type: application/json
+
+{
+  "sensor": 1,
+  "temperature": 25.3
+}
+
+###
+
+# получение информации по датчику
+GET localhost:8000/api/sensors/1/
+Content-Type: application/json
